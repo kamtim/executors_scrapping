@@ -7,13 +7,13 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-with open("yodo_data.json", "r") as read_file:
+with open("scrappers/yodo/yodo_data.json", "r") as read_file:
     yodo_data = json.load(read_file)
 
-with open("yandex_uslugi_data.json", "r") as read_file:
+with open("scrappers/uslugi/yandex_uslugi_data.json", "r") as read_file:
     yandex_uslugi_data = json.load(read_file)
 
-with open("profi_data.json", "r") as read_file:
+with open("scrappers/profi/profi_data.json", "r") as read_file:
     profi_data = json.load(read_file)
 
 data = yodo_data + yandex_uslugi_data + profi_data
