@@ -3,8 +3,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import json
 
-driverPath = '/Users/study_kam/Downloads/chromedriver'
-main_url = "https://youdo.com/executors-teaching-english"
+driverPath = '/Users/study_kam/Downloads/chromedriver91'
+main_url = "https://youdo.com/executors-courier"
 
 opts = Options()
 # opts.headless = True
@@ -12,7 +12,8 @@ opts = Options()
 driver = webdriver.Chrome(driverPath, options=opts)
 driver.get(main_url)
 
-data = []
+executors_data = {}
+
 
 def check_exists_by_xpath(xpath):
     try:
@@ -21,16 +22,32 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
-def scrap_list():
-    executor_item_xpath = "//*[@class='b-executors-list']//li"
 
+def get_type_links_list():
+    def get_href(a):
+        return a.get_attribute('href')
+
+    types_list_xpath = "//*[@class='executors_categories__parent']//*[contains(@class, " \
+                       "'executors_categories__parent_link')] "
+
+    return list(map(get_href, driver.find_elements_by_xpath(types_list_xpath)))
+
+
+def scrap_executors_list():
+    type_xpath = "//*[@class='executors_categories__parent active']//*[contains(@class, " \
+                 "'executors_categories__parent_link')] "
+    type_title = driver.find_elements_by_xpath(type_xpath)[0].text
+
+    executor_item_xpath = "//*[@class='b-executors-list']//li"
     executor_list_length = len(driver.find_elements_by_xpath(executor_item_xpath))
+
+    executors_list = []
 
     for i in range(2, executor_list_length):
         nth_executor = executor_item_xpath + "[" + str(i) + "]"
-        name_xpath = nth_executor + "//*[@class='name___e3547']"
-        skills_xpath = nth_executor + "//*[@class='skills___f177c']"
-        image_xpath = nth_executor + "//*[@class='image___6e813']"
+        name_xpath = nth_executor + "//*[@class='name__e3547']"
+        skills_xpath = nth_executor + "//*[@class='skills__f177c']"
+        image_xpath = nth_executor + "//*[@class='image__6e813']"
 
         if (check_exists_by_xpath(name_xpath) == False):
             continue
@@ -39,17 +56,32 @@ def scrap_list():
         skills = driver.find_element_by_xpath(skills_xpath)
         image = driver.find_element_by_xpath(image_xpath)
 
-        data.append({
+        executors_list.append({
             "name_text": name.text,
             "url": name.get_attribute('href'),
             "skills": skills.text,
             "image": image.get_attribute('src'),
         })
 
+        executors_data[type_title] = executors_list
 
-scrap_list()
 
-text_file = open("yodo_data.json", "w")
-json_data = json.dumps(data, ensure_ascii=False)
-text_file.write(json_data)
-text_file.close()
+def write_to_file(data):
+    text_file = open("yodo_data.json", "w")
+    json_data = json.dumps(data, ensure_ascii=False)
+    text_file.write(json_data)
+    text_file.close()
+
+
+type_links_list = get_type_links_list()
+
+for type_link in type_links_list:
+    driver.get(type_link)
+
+    # some kind of advertisement appears, so we should return to original site
+    if "https://youdo.com" not in driver.current_url:
+        driver.back()
+
+    scrap_executors_list()
+
+write_to_file(executors_data)
