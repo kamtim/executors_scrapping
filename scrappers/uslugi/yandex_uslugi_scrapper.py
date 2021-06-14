@@ -1,10 +1,10 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 import json
 import time
 
-driverPath = '/Users/study_kam/Downloads/chromedriver2'
+driverPath = '/Users/study_kam/Downloads/chromedriver91'
 main_url = "https://yandex.ru/uslugi/43-kazan/category/repetitoryi-i-obuchenie/anglijskij-yazyik--2276"
 
 opts = Options()
@@ -17,6 +17,7 @@ time.sleep(2)
 
 data = []
 
+
 def check_exists_by_xpath(xpath):
     try:
         driver.find_element_by_xpath(xpath)
@@ -24,13 +25,18 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
+
 def scrap_list():
     executor_item_xpath = "//*[contains(@class, 'WorkersListBlendered-WorkerCard')]"
+
     # images loades lazy, we should scroll down for for its loading
-    driver.execute_script("function pageScroll(speed) { window.scrollBy(0,1); scrolldelay = setTimeout(pageScroll,speed);} pageScroll(100);")
+    driver.execute_script("window.scrollBy(0,500);")
 
     for i in range(2, len(driver.find_elements_by_xpath(executor_item_xpath))):
         print(i)
+
+        # images loades lazy, we should scroll down for for its loading
+        driver.execute_script( "window.scrollBy(0,500);" )
 
         nth_executor = executor_item_xpath + "[" + str(i) + "]"
         name_xpath = nth_executor + "//*[contains(@class, 'WorkerCardMini-Title')]//a"
@@ -43,9 +49,14 @@ def scrap_list():
         image_xpath = nth_executor + "//*[contains(@class, 'WorkerCardMini-Avatar')]/*"
 
         try:
-            button = driver.find_element_by_xpath(button_xpath)
-            button.click()
-            time.sleep(1)
+            try:
+                button = driver.find_element_by_xpath(button_xpath)
+                button.click()
+                time.sleep(1)
+            except ElementClickInterceptedException:
+                print(button_xpath)
+                pass
+
 
             name = driver.find_element_by_xpath(name_xpath)
             skills = driver.find_element_by_xpath(skills_xpath)
