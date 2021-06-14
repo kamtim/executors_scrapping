@@ -16,7 +16,7 @@ with open("scrappers/uslugi/yandex_uslugi_data.json", "r") as read_file:
 with open("scrappers/profi/profi_data.json", "r") as read_file:
     profi_data = json.load(read_file)
 
-data = yodo_data + yandex_uslugi_data + profi_data
+data = yodo_data["Репетиторы и обучение"] + yandex_uslugi_data + profi_data
 
 
 @app.route('/')

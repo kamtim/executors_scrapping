@@ -4,7 +4,7 @@ from selenium.common.exceptions import NoSuchElementException
 import json
 import time
 
-driverPath = '/Users/study_kam/Downloads/chromedriver2'
+driverPath = '/Users/study_kam/Downloads/chromedriver91'
 main_url = "https://kzn.profi.ru/repetitor/english/?seamless=1&tabName=PROFILES"
 
 opts = Options()
