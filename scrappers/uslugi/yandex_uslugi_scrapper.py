@@ -4,6 +4,8 @@ from selenium.common.exceptions import NoSuchElementException, ElementClickInter
 import json
 import time
 
+from database.populate import write_to_database
+
 driverPath = '/Users/study_kam/Downloads/chromedriver91'
 main_url = "https://yandex.ru/uslugi/43-kazan/category/repetitoryi-i-obuchenie/anglijskij-yazyik--2276"
 
@@ -71,11 +73,15 @@ def scrap_list():
             continue
 
 
+def write_to_file(data):
+    text_file = open("yandex_uslugi_data.json", "w")
+    json_data = json.dumps(data, ensure_ascii=False)
+    text_file.write(json_data)
+    text_file.close()
+
+
 scrap_list()
 
-text_file = open("yandex_uslugi_data.json", "w")
-json_data = json.dumps(data, ensure_ascii=False)
-text_file.write(json_data)
-text_file.close()
-
+write_to_file(data)
+write_to_database(data)
 driver.close()

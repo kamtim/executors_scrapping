@@ -3,6 +3,13 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import json
 
+from sqlalchemy.exc import NoResultFound
+
+from database.database_setup import Freelancer
+from database.populate import session, write_to_database
+
+print(session.query(Freelancer).all())
+
 driverPath = '/Users/study_kam/Downloads/chromedriver91'
 main_url = "https://youdo.com/executors-courier"
 
@@ -68,14 +75,13 @@ def scrap_executors_list():
 
 def write_to_file(data):
     text_file = open("yodo_data.json", "w")
-    json_data = json.dumps(data, ensure_ascii=False)
+    json_data = json.dumps(data["Ремонт и строительство"], ensure_ascii=False)
     text_file.write(json_data)
     text_file.close()
 
-
 type_links_list = get_type_links_list()
 
-for type_link in type_links_list:
+for type_link in type_links_list[0:1]:
     driver.get(type_link)
 
     # some kind of advertisement appears, so we should return to original site
@@ -85,3 +91,6 @@ for type_link in type_links_list:
     scrap_executors_list()
 
 write_to_file(executors_data)
+write_to_database(executors_data["Ремонт и строительство"])
+
+print(session.query(Freelancer).all())

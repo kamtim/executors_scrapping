@@ -4,6 +4,8 @@ from selenium.common.exceptions import NoSuchElementException
 import json
 import time
 
+from database.populate import write_to_database
+
 driverPath = '/Users/study_kam/Downloads/chromedriver91'
 main_url = "https://kzn.profi.ru/repetitor/english/?seamless=1&tabName=PROFILES"
 
@@ -50,12 +52,14 @@ def scrap_list():
         except NoSuchElementException:
             continue
 
+def write_to_file(data):
+    text_file = open("profi_data.json", "w")
+    json_data = json.dumps(data, ensure_ascii=False)
+    text_file.write(json_data)
+    text_file.close()
 
 scrap_list()
 
-text_file = open("profi_data.json", "w")
-json_data = json.dumps(data, ensure_ascii=False)
-text_file.write(json_data)
-text_file.close()
-
+write_to_file(data)
+write_to_database(data)
 driver.close()
