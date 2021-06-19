@@ -3,8 +3,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import json
 
-from sqlalchemy.exc import NoResultFound
-
 from database.database_setup import Freelancer
 from database.populate import session, write_to_database
 
@@ -79,18 +77,18 @@ def write_to_file(data):
     text_file.write(json_data)
     text_file.close()
 
-type_links_list = get_type_links_list()
 
-for type_link in type_links_list[0:1]:
-    driver.get(type_link)
+def scrap_youdo_data():
+    type_links_list = get_type_links_list()
 
-    # some kind of advertisement appears, so we should return to original site
-    if "https://youdo.com" not in driver.current_url:
-        driver.back()
+    for type_link in type_links_list[0:1]:
+        driver.get(type_link)
 
-    scrap_executors_list()
+        # some kind of advertisement appears, so we should return to original site
+        if "https://youdo.com" not in driver.current_url:
+            driver.back()
 
-write_to_file(executors_data)
-write_to_database(executors_data["Ремонт и строительство"])
+        scrap_executors_list()
 
-print(session.query(Freelancer).all())
+    write_to_file(executors_data)
+    write_to_database(executors_data["Ремонт и строительство"])

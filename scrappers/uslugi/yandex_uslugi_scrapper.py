@@ -80,8 +80,9 @@ def write_to_file(data):
     text_file.close()
 
 
-scrap_list()
+def scrap_yandex_uslugi_data():
+    scrap_list()
 
-write_to_file(data)
-write_to_database(data)
-driver.close()
+    write_to_file(data)
+    write_to_database(data)
+    driver.close()

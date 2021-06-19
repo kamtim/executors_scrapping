@@ -1,9 +1,15 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 
 import json
 
 from database.populate import get_all_freelancers_from_database
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from scheduler.scheduled_work import scheduled_work
+
+sched = BackgroundScheduler()
+sched.start()
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -43,6 +49,9 @@ def get_data_from_database():
 
 
 freelancers = get_data_from_database()
+
+
+job = sched.add_job(scheduled_work, 'interval', days=1)
 
 
 @app.route('/')
