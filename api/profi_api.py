@@ -35,6 +35,5 @@ r = requests.get('https://kzn.profi.ru/graphql/?gqlid=%24GQLID%7B1f253903307a649
                  headers=headers)
 
 text_file = open("profi_api_data.json", "w")
-json_data = json.dumps(r.text, ensure_ascii=False)
-text_file.write(json_data)
+text_file.write(r.text)
 text_file.close()
